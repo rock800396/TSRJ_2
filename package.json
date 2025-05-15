@@ -1,0 +1,12 @@
+{
+  "name": "pms",
+  "version": "1.0.0",
+  "description": "人员管理系统",
+  "license": "MIT",
+  "author": "天上人间一号妹妹",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
