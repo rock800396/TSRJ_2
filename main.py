@@ -312,7 +312,7 @@ class MainWindow:
         self.personnel_listbox.selection_clear(0, tk.END)
 
 
-    def on_personnel_select(self, event):
+    def on_personnel_select(self, event: object):
         try:
             selected_index = self.personnel_listbox.curselection()[0]
             selected_item_str = self.personnel_listbox.get(selected_index)
@@ -537,7 +537,7 @@ class UserManagementWindow:
             self.user_listbox.insert(tk.END, f"{username}（{role}）")
         self.clear_user_fields() # Also clear fields and disable buttons
 
-    def on_user_select(self, event):
+    def on_user_select(self, event: object):
         try:
             selected_index = self.user_listbox.curselection()[0]
             selected_item_str = self.user_listbox.get(selected_index)
@@ -639,7 +639,7 @@ class UserManagementWindow:
 
 # --- Application Controller ---
 class AppController:
-    def __init__(self, root):
+    def __init__(self, root: object):
         self.root = root
         self.data_manager = DataManager()
         self.current_user = None
