@@ -1,12 +1,14 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+
 # --- 数据模型 ---
 class User:
     def __init__(self, username, password, role):
         self.username = username
-        self.password = password # 在实际应用中，密码应该被哈希存储
+        self.password = password  # 在实际应用中，密码应该被哈希存储
         self.role = role
+
 
 class Person:
     def __init__(self, person_id, name, age):
@@ -16,6 +18,7 @@ class Person:
 
     def __str__(self):
         return f"编号: {self.id}, 姓名: {self.name}, 年龄: {self.age}"
+
 
 # --- 管理器类 ---
 class DataManager:
@@ -46,7 +49,7 @@ class DataManager:
                 "add_person": False,
                 "view_personnel": True,
                 "find_person": True,
-                "update_person": False, # 普通用户默认不能更新
+                "update_person": False,  # 普通用户默认不能更新
                 "delete_person": False,
                 "configure_permissions": False
             }
@@ -54,7 +57,7 @@ class DataManager:
         self.available_actions = [
             "add_person", "view_personnel", "find_person",
             "update_person", "delete_person"
-        ] # configure_permissions 是特殊权限
+        ]  # configure_permissions 是特殊权限
 
     def authenticate_user(self, username, password):
         user = self.users.get(username)
@@ -78,17 +81,17 @@ class DataManager:
     def add_user(self, username, password, role):
         if username in self.users:
             return False, "用户名已存在。"
-        if role not in self.permissions: # 确保角色是已知的（admin, user）
-             return False, f"角色 '{role}' 不是预定义角色类型。"
+        if role not in self.permissions:  # 确保角色是已知的（admin, user）
+            return False, f"角色 '{role}' 不是预定义角色类型。"
         self.users[username] = User(username, password, role)
         # 为新用户角色（如果之前不存在）初始化权限，通常新用户会是 'user' 角色
         # 如果是全新的角色类型，需要管理员手动配置其权限，这里简化为新用户默认继承'user'权限
         if role not in self.permissions:
-            self.permissions[role] = self.permissions.get("user", {}).copy() # 默认权限
+            self.permissions[role] = self.permissions.get("user", {}).copy()  # 默认权限
         return True, "用户添加成功。"
 
     def delete_user(self, username):
-        if username == "admin": # 禁止删除管理员
+        if username == "admin":  # 禁止删除管理员
             return False, "无法删除管理员用户。"
         if username in self.users:
             del self.users[username]
@@ -137,6 +140,7 @@ class DataManager:
             return True, "人员删除成功。"
         return False, "人员编号未找到。"
 
+
 # --- GUI 类 ---
 class LoginWindow:
     def __init__(self, master, app_controller):
@@ -167,11 +171,13 @@ class LoginWindow:
             print("Error loading flag image:", e)
 
         # Add a title label
-        self.title_label = tk.Label(self.bg_frame, text="欢迎使用人员管理系统", font=("Arial", 18, "bold"), fg="darkblue", bg="#8B0000")
+        self.title_label = tk.Label(self.bg_frame, text="欢迎使用人员管理系统", font=("Arial", 18, "bold"),
+                                    fg="darkblue", bg="#8B0000")
         self.title_label.pack(pady=5)
 
         # Add a slogan
-        self.slogan_label = tk.Label(self.bg_frame, text="爱岗敬业，爱国奉献", font=("Arial", 14, "italic"), fg="darkblue", bg="#8B0000")
+        self.slogan_label = tk.Label(self.bg_frame, text="爱岗敬业，爱国奉献", font=("Arial", 14, "italic"),
+                                     fg="darkblue", bg="#8B0000")
         self.slogan_label.pack(pady=5)
 
         # Add username and password fields
@@ -184,15 +190,17 @@ class LoginWindow:
         self.password_entry.pack(pady=5)
 
         # Add a login button
-        self.login_button = tk.Button(self.bg_frame, text="登录", font=("Arial", 12, "bold"), bg="white", fg="red", command=self.login)
+        self.login_button = tk.Button(self.bg_frame, text="登录", font=("Arial", 12, "bold"), bg="white", fg="red",
+                                      command=self.login)
         self.login_button.pack(pady=10)
 
         # Add a dynamic element (e.g., a moving text)
-        self.dynamic_label = tk.Label(self.bg_frame, text="安全登录", font=("Arial", 10, "italic"), fg="white", bg="#8B0000")
+        self.dynamic_label = tk.Label(self.bg_frame, text="安全登录", font=("Arial", 10, "italic"), fg="white",
+                                      bg="#8B0000")
         self.dynamic_label.pack(pady=5)
         self.animate_text()
 
-        master.bind('<Return>', lambda event: self.login()) # Bind Enter key to login
+        master.bind('<Return>', lambda event: self.login())  # Bind Enter key to login
 
     def animate_text(self):
         current_text = self.dynamic_label.cget("text")
@@ -206,10 +214,11 @@ class LoginWindow:
         user = self.app_controller.data_manager.authenticate_user(username, password)
         if user:
             self.app_controller.current_user = user
-            self.master.destroy() # Close login window
+            self.master.destroy()  # Close login window
             self.app_controller.show_main_window()
         else:
             messagebox.showerror("登录失败", "用户名或密码错误。")
+
 
 class MainWindow:
     def __init__(self, master, app_controller):
@@ -243,50 +252,64 @@ class MainWindow:
         # --- 控件样式 ---
         style = ttk.Style()
         style.configure("Red.TLabelframe", background="#8B0000", foreground="darkblue")
-        style.configure("Red.TLabelframe.Label", background="#8B0000", foreground="darkblue", font=("Arial", 14, "bold"))
+        style.configure("Red.TLabelframe.Label", background="#8B0000", foreground="darkblue",
+                        font=("Arial", 14, "bold"))
         style.configure("Red.TButton", background="white", foreground="#8B0000", font=("Arial", 11, "bold"))
         style.configure("Red.TLabel", background="#8B0000", foreground="white", font=("Arial", 12))
 
         # --- Control Frame Widgets (Input fields and buttons) ---
-        tk.Label(control_frame, text="编号：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(control_frame, text="编号：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=0, column=0,
+                                                                                                 padx=5, pady=5,
+                                                                                                 sticky="w")
         self.id_entry = tk.Entry(control_frame, font=("Arial", 12))
         self.id_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        tk.Label(control_frame, text="姓名：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(control_frame, text="姓名：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=1, column=0,
+                                                                                                 padx=5, pady=5,
+                                                                                                 sticky="w")
         self.name_entry = tk.Entry(control_frame, font=("Arial", 12))
         self.name_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
-        tk.Label(control_frame, text="年龄：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(control_frame, text="年龄：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=2, column=0,
+                                                                                                 padx=5, pady=5,
+                                                                                                 sticky="w")
         self.age_entry = tk.Entry(control_frame, font=("Arial", 12))
         self.age_entry.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
-        control_frame.columnconfigure(1, weight=1) # Make entry fields expand
+        control_frame.columnconfigure(1, weight=1)  # Make entry fields expand
 
         # Buttons Frame
         button_frame = ttk.Frame(control_frame, style="Red.TLabelframe")
         button_frame.grid(row=3, column=0, columnspan=2, pady=10)
 
-        self.add_button = tk.Button(button_frame, text="添加人员", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.add_person)
+        self.add_button = tk.Button(button_frame, text="添加人员", font=("Arial", 11, "bold"), bg="white", fg="#8B0000",
+                                    command=self.add_person)
         self.add_button.pack(side="left", padx=5)
 
-        self.view_button = tk.Button(button_frame, text="查看全部", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.view_all_personnel)
+        self.view_button = tk.Button(button_frame, text="查看全部", font=("Arial", 11, "bold"), bg="white",
+                                     fg="#8B0000", command=self.view_all_personnel)
         self.view_button.pack(side="left", padx=5)
 
-        self.find_button = tk.Button(button_frame, text="按编号查找", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.find_person)
+        self.find_button = tk.Button(button_frame, text="按编号查找", font=("Arial", 11, "bold"), bg="white",
+                                     fg="#8B0000", command=self.find_person)
         self.find_button.pack(side="left", padx=5)
 
-        self.update_button = tk.Button(button_frame, text="更新人员", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.update_person)
+        self.update_button = tk.Button(button_frame, text="更新人员", font=("Arial", 11, "bold"), bg="white",
+                                       fg="#8B0000", command=self.update_person)
         self.update_button.pack(side="left", padx=5)
 
-        self.delete_button = tk.Button(button_frame, text="删除人员", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.delete_person)
+        self.delete_button = tk.Button(button_frame, text="删除人员", font=("Arial", 11, "bold"), bg="white",
+                                       fg="#8B0000", command=self.delete_person)
         self.delete_button.pack(side="left", padx=5)
-        
-        self.clear_button = tk.Button(button_frame, text="清空输入", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.clear_fields)
+
+        self.clear_button = tk.Button(button_frame, text="清空输入", font=("Arial", 11, "bold"), bg="white",
+                                      fg="#8B0000", command=self.clear_fields)
         self.clear_button.pack(side="left", padx=5)
 
         # --- Display Frame Widgets (Listbox) ---
-        self.personnel_listbox = tk.Listbox(display_frame, height=15, font=("Arial", 12), bg="#8B0000", fg="white", selectbackground="darkblue", selectforeground="white")
-        self.personnel_listbox.pack(side="left", fill="both", expand=True, padx=(0,5))
+        self.personnel_listbox = tk.Listbox(display_frame, height=15, font=("Arial", 12), bg="#8B0000", fg="white",
+                                            selectbackground="darkblue", selectforeground="white")
+        self.personnel_listbox.pack(side="left", fill="both", expand=True, padx=(0, 5))
         self.personnel_listbox.bind('<<ListboxSelect>>', self.on_personnel_select)
 
         scrollbar = ttk.Scrollbar(display_frame, orient="vertical", command=self.personnel_listbox.yview)
@@ -295,15 +318,19 @@ class MainWindow:
 
         # --- Apply Permissions to Buttons ---
         self.apply_button_permissions()
-        self.view_all_personnel() # Initial load
+        self.view_all_personnel()  # Initial load
 
     def apply_button_permissions(self):
         role = self.current_user.role
         self.add_button.config(state=tk.NORMAL if self.data_manager.has_permission(role, "add_person") else tk.DISABLED)
-        self.view_button.config(state=tk.NORMAL if self.data_manager.has_permission(role, "view_personnel") else tk.DISABLED)
-        self.find_button.config(state=tk.NORMAL if self.data_manager.has_permission(role, "find_person") else tk.DISABLED)
-        self.update_button.config(state=tk.NORMAL if self.data_manager.has_permission(role, "update_person") else tk.DISABLED)
-        self.delete_button.config(state=tk.NORMAL if self.data_manager.has_permission(role, "delete_person") else tk.DISABLED)
+        self.view_button.config(
+            state=tk.NORMAL if self.data_manager.has_permission(role, "view_personnel") else tk.DISABLED)
+        self.find_button.config(
+            state=tk.NORMAL if self.data_manager.has_permission(role, "find_person") else tk.DISABLED)
+        self.update_button.config(
+            state=tk.NORMAL if self.data_manager.has_permission(role, "update_person") else tk.DISABLED)
+        self.delete_button.config(
+            state=tk.NORMAL if self.data_manager.has_permission(role, "delete_person") else tk.DISABLED)
 
     def clear_fields(self):
         self.id_entry.delete(0, tk.END)
@@ -311,8 +338,7 @@ class MainWindow:
         self.age_entry.delete(0, tk.END)
         self.personnel_listbox.selection_clear(0, tk.END)
 
-
-    def on_personnel_select(self, event: object):
+    def on_personnel_select(self, _: object):
         try:
             selected_index = self.personnel_listbox.curselection()[0]
             selected_item_str = self.personnel_listbox.get(selected_index)
@@ -327,7 +353,7 @@ class MainWindow:
                 self.age_entry.delete(0, tk.END)
                 self.age_entry.insert(0, str(person.age))
         except IndexError:
-            pass # No item selected or list is empty
+            pass  # No item selected or list is empty
 
     def add_person(self):
         person_id = self.id_entry.get()
@@ -355,7 +381,6 @@ class MainWindow:
         else:
             self.personnel_listbox.insert(tk.END, "暂无人员数据。")
 
-
     def find_person(self):
         person_id = self.id_entry.get()
         if not person_id:
@@ -373,7 +398,7 @@ class MainWindow:
             messagebox.showinfo("找到", f"已找到编号为 {person_id} 的人员。")
         else:
             messagebox.showinfo("未找到", f"未找到编号为 {person_id} 的人员。")
-            self.view_all_personnel() # Refresh to show all if not found
+            self.view_all_personnel()  # Refresh to show all if not found
 
     def update_person(self):
         person_id = self.id_entry.get()
@@ -424,9 +449,9 @@ class PermissionConfigWindow:
         master.title("权限配置")
         master.geometry("600x400")
         master.configure(bg="#8B0000")
-        master.grab_set() # Modal window
+        master.grab_set()  # Modal window
 
-        self.permission_vars = {} # To store Checkbutton variables
+        self.permission_vars = {}  # To store Checkbutton variables
 
         tk.Label(master, text="角色权限配置", font=("Arial", 14), bg="#8B0000", fg="darkblue").pack(pady=10)
 
@@ -440,11 +465,12 @@ class PermissionConfigWindow:
                 "find_person": "查找人员",
                 "update_person": "更新人员",
                 "delete_person": "删除人员"
-            }.get(action_name, action_name)
-            tk.Label(header_frame, text=zh_action, width=15, relief="groove", bg="#8B0000", fg="white").pack(side="left")
+            }.get(action_name, str(action_name) if action_name is not None else "")
+            tk.Label(header_frame, text=zh_action, width=15, relief="groove", bg="#8B0000", fg="white").pack(
+                side="left")
 
         for role, perms in self.data_manager.permissions.items():
-            if role == "admin": # Admin permissions are not editable through UI
+            if role == "admin":  # Admin permissions are not editable through UI
                 continue
             role_frame = ttk.Frame(master)
             role_frame.pack(fill="x", padx=10, pady=2)
@@ -453,10 +479,12 @@ class PermissionConfigWindow:
             for action in self.data_manager.available_actions:
                 var = tk.BooleanVar(value=perms.get(action, False))
                 self.permission_vars[role][action] = var
-                chk = tk.Checkbutton(role_frame, variable=var, width=15, bg="#8B0000", fg="white", selectcolor="#8B0000", activebackground="#8B0000")
+                chk = tk.Checkbutton(role_frame, variable=var, width=15, bg="#8B0000", fg="white",
+                                     selectcolor="#8B0000", activebackground="#8B0000")
                 chk.pack(side="left")
 
-        save_button = tk.Button(master, text="保存权限", command=self.save_permissions, bg="white", fg="#8B0000", font=("Arial", 11, "bold"))
+        save_button = tk.Button(master, text="保存权限", command=self.save_permissions, bg="white", fg="#8B0000",
+                                font=("Arial", 11, "bold"))
         save_button.pack(pady=20)
 
     def save_permissions(self):
@@ -467,6 +495,7 @@ class PermissionConfigWindow:
         if self.app_controller.main_window_instance:
             self.app_controller.main_window_instance.apply_button_permissions()
         self.master.destroy()
+
 
 class UserManagementWindow:
     def __init__(self, master, app_controller):
@@ -483,8 +512,9 @@ class UserManagementWindow:
         list_frame.pack(pady=10, padx=10, fill="x")
         list_frame.configure(style="Red.TLabelframe")
 
-        self.user_listbox = tk.Listbox(list_frame, height=5, font=("Arial", 12), bg="#8B0000", fg="white", selectbackground="darkblue", selectforeground="white")
-        self.user_listbox.pack(side="left", fill="x", expand=True, padx=(0,5))
+        self.user_listbox = tk.Listbox(list_frame, height=5, font=("Arial", 12), bg="#8B0000", fg="white",
+                                       selectbackground="darkblue", selectforeground="white")
+        self.user_listbox.pack(side="left", fill="x", expand=True, padx=(0, 5))
         user_scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.user_listbox.yview)
         user_scrollbar.pack(side="right", fill="y")
         self.user_listbox.config(yscrollcommand=user_scrollbar.set)
@@ -495,21 +525,29 @@ class UserManagementWindow:
         details_frame.pack(pady=10, padx=10, fill="x")
         details_frame.configure(style="Red.TLabelframe")
 
-        tk.Label(details_frame, text="用户名：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(details_frame, text="用户名：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=0, column=0,
+                                                                                                   padx=5, pady=5,
+                                                                                                   sticky="w")
         self.username_entry = tk.Entry(details_frame, font=("Arial", 12))
         self.username_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        tk.Label(details_frame, text="密码：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(details_frame, text="密码：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=1, column=0,
+                                                                                                 padx=5, pady=5,
+                                                                                                 sticky="w")
         self.password_entry = tk.Entry(details_frame, show="*", font=("Arial", 12))
         self.password_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
-        tk.Label(details_frame, text="（如果编辑，留空保持当前密码）", font=("Arial", 10), fg="white", bg="#8B0000").grid(row=1, column=2, padx=5, pady=5, sticky="w")
+        tk.Label(details_frame, text="（如果编辑，留空保持当前密码）", font=("Arial", 10), fg="white", bg="#8B0000").grid(
+            row=1, column=2, padx=5, pady=5, sticky="w")
 
-        tk.Label(details_frame, text="角色：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(details_frame, text="角色：", font=("Arial", 12), fg="white", bg="#8B0000").grid(row=2, column=0,
+                                                                                                 padx=5, pady=5,
+                                                                                                 sticky="w")
         self.role_var = tk.StringVar(master)
         roles = [r for r in self.data_manager.permissions.keys() if r != "admin"]
         if not roles: roles = ["user"]
         self.role_var.set(roles[0] if roles else "user")
-        self.role_menu = ttk.Combobox(details_frame, textvariable=self.role_var, values=roles, state="readonly", font=("Arial", 12))
+        self.role_menu = ttk.Combobox(details_frame, textvariable=self.role_var, values=roles, state="readonly",
+                                      font=("Arial", 12))
         self.role_menu.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
         details_frame.columnconfigure(1, weight=1)
@@ -517,15 +555,19 @@ class UserManagementWindow:
         action_button_frame = ttk.Frame(details_frame, style="Red.TLabelframe")
         action_button_frame.grid(row=3, column=0, columnspan=3, pady=10)
 
-        self.add_user_button = tk.Button(action_button_frame, text="添加用户", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.add_user)
+        self.add_user_button = tk.Button(action_button_frame, text="添加用户", font=("Arial", 11, "bold"), bg="white",
+                                         fg="#8B0000", command=self.add_user)
         self.add_user_button.pack(side="left", padx=5)
-        self.update_user_button = tk.Button(action_button_frame, text="更新用户（仅角色）", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.update_user)
+        self.update_user_button = tk.Button(action_button_frame, text="更新用户（仅角色）", font=("Arial", 11, "bold"),
+                                            bg="white", fg="#8B0000", command=self.update_user)
         self.update_user_button.pack(side="left", padx=5)
         self.update_user_button.config(state=tk.DISABLED)
-        self.delete_user_button = tk.Button(action_button_frame, text="删除用户", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.delete_user)
+        self.delete_user_button = tk.Button(action_button_frame, text="删除用户", font=("Arial", 11, "bold"),
+                                            bg="white", fg="#8B0000", command=self.delete_user)
         self.delete_user_button.pack(side="left", padx=5)
         self.delete_user_button.config(state=tk.DISABLED)
-        self.clear_user_fields_button = tk.Button(action_button_frame, text="清空输入", font=("Arial", 11, "bold"), bg="white", fg="#8B0000", command=self.clear_user_fields)
+        self.clear_user_fields_button = tk.Button(action_button_frame, text="清空输入", font=("Arial", 11, "bold"),
+                                                  bg="white", fg="#8B0000", command=self.clear_user_fields)
         self.clear_user_fields_button.pack(side="left", padx=5)
 
         self.refresh_user_list()
@@ -535,9 +577,9 @@ class UserManagementWindow:
         users_info = self.data_manager.get_all_users_info()
         for username, role in users_info.items():
             self.user_listbox.insert(tk.END, f"{username}（{role}）")
-        self.clear_user_fields() # Also clear fields and disable buttons
+        self.clear_user_fields()  # Also clear fields and disable buttons
 
-    def on_user_select(self, event: object):
+    def on_user_select(self, _: object):
         try:
             selected_index = self.user_listbox.curselection()[0]
             selected_item_str = self.user_listbox.get(selected_index)
@@ -547,10 +589,10 @@ class UserManagementWindow:
             if user_obj:
                 self.username_entry.delete(0, tk.END)
                 self.username_entry.insert(0, user_obj.username)
-                self.username_entry.config(state=tk.DISABLED) # Username is key, don't edit
-                
-                self.password_entry.delete(0, tk.END) # Clear password field for security
-                
+                self.username_entry.config(state=tk.DISABLED)  # Username is key, don't edit
+
+                self.password_entry.delete(0, tk.END)  # Clear password field for security
+
                 self.role_var.set(user_obj.role)
 
                 if username == "admin":
@@ -564,20 +606,19 @@ class UserManagementWindow:
                 self.add_user_button.config(state=tk.DISABLED)
 
         except IndexError:
-            self.clear_user_fields() # No selection
+            self.clear_user_fields()  # No selection
 
     def clear_user_fields(self):
         self.username_entry.config(state=tk.NORMAL)
         self.username_entry.delete(0, tk.END)
         self.password_entry.delete(0, tk.END)
-        if self.role_menu['values']: # Check if Combobox has values
-            self.role_var.set(self.role_menu['values'][0]) # Reset to first role
+        if self.role_menu['values']:  # Check if Combobox has values
+            self.role_var.set(self.role_menu['values'][0])  # Reset to first role
         self.user_listbox.selection_clear(0, tk.END)
         self.update_user_button.config(state=tk.DISABLED)
         self.delete_user_button.config(state=tk.DISABLED)
         self.add_user_button.config(state=tk.NORMAL)
         self.role_menu.config(state="readonly")
-
 
     def add_user(self):
         username = self.username_entry.get()
@@ -596,34 +637,33 @@ class UserManagementWindow:
             messagebox.showerror("错误", message, parent=self.master)
 
     def update_user(self):
-        username = self.username_entry.get() # Should be disabled and pre-filled
+        username = self.username_entry.get()  # Should be disabled and pre-filled
         new_role = self.role_var.get()
-        new_password = self.password_entry.get() # Optional new password
+        new_password = self.password_entry.get()  # Optional new password
 
         if not username:
             messagebox.showerror("错误", "请选择一个用户进行更新。", parent=self.master)
             return
-        
+
         user_obj = self.data_manager.users.get(username)
         if not user_obj:
             messagebox.showerror("错误", "用户未找到。", parent=self.master)
             return
 
         if username == "admin" and new_role != "admin":
-             messagebox.showerror("错误", "管理员用户角色无法更改。", parent=self.master)
-             self.role_var.set("admin") # Revert
-             return
+            messagebox.showerror("错误", "管理员用户角色无法更改。", parent=self.master)
+            self.role_var.set("admin")  # Revert
+            return
 
         user_obj.role = new_role
-        if new_password: # If password field is not empty, update password
+        if new_password:  # If password field is not empty, update password
             user_obj.password = new_password
-        
+
         messagebox.showinfo("成功", f"用户 '{username}' 更新成功。", parent=self.master)
         self.refresh_user_list()
 
-
     def delete_user(self):
-        username = self.username_entry.get() # Should be disabled and pre-filled
+        username = self.username_entry.get()  # Should be disabled and pre-filled
         if not username:
             messagebox.showerror("错误", "请选择一个用户进行删除。", parent=self.master)
             return
@@ -639,11 +679,11 @@ class UserManagementWindow:
 
 # --- Application Controller ---
 class AppController:
-    def __init__(self, root: object):
-        self.root = root
+    def __init__(self, root_window: tk.Tk):
+        self.root = root_window
         self.data_manager = DataManager()
-        self.current_user = None
-        self.main_window_instance = None # To keep track of main window for updates
+        self.current_user: User | None = None
+        self.main_window_instance: MainWindow | None = None  # To keep track of main window for updates
 
         # Hide the root window initially
         self.root.withdraw()
@@ -652,22 +692,23 @@ class AppController:
     def show_login_window(self):
         login_toplevel = tk.Toplevel(self.root)
         LoginWindow(login_toplevel, self)
-        login_toplevel.protocol("WM_DELETE_WINDOW", self.root.destroy) # Exit app if login closed
+        login_toplevel.protocol("WM_DELETE_WINDOW", self.root.destroy)  # Exit app if login closed
 
     def show_main_window(self):
         # The main application window will be the root window itself or a new Toplevel
         # Using a new Toplevel for main window to keep root hidden as a controller base
         main_toplevel = tk.Toplevel(self.root)
         self.main_window_instance = MainWindow(main_toplevel, self)
-        main_toplevel.protocol("WM_DELETE_WINDOW", self.root.destroy) # Exit app if main window closed
+        main_toplevel.protocol("WM_DELETE_WINDOW", self.root.destroy)  # Exit app if main window closed
 
     def run(self):
         self.root.mainloop()
+
 
 # --- Main Execution ---
 if __name__ == "__main__":
     root = tk.Tk()
     app = AppController(root)
-    app.run() # Start the application
+    app.run()  # Start the application
 
-# 最新修改日期2023年5月15日
+# 最新修改日期2025年5月21日
