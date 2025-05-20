@@ -440,7 +440,7 @@ class PermissionConfigWindow:
                 "find_person": "查找人员",
                 "update_person": "更新人员",
                 "delete_person": "删除人员"
-            }.get(action_name, action_name)
+            }.get(action_name, str(action_name) if action_name is not None else "")
             tk.Label(header_frame, text=zh_action, width=15, relief="groove", bg="#8B0000", fg="white").pack(side="left")
 
         for role, perms in self.data_manager.permissions.items():
@@ -639,11 +639,11 @@ class UserManagementWindow:
 
 # --- Application Controller ---
 class AppController:
-    def __init__(self, root: object):
+    def __init__(self, root: tk.Tk):
         self.root = root
         self.data_manager = DataManager()
-        self.current_user = None
-        self.main_window_instance = None # To keep track of main window for updates
+        self.current_user: User | None = None
+        self.main_window_instance: MainWindow | None = None # To keep track of main window for updates
 
         # Hide the root window initially
         self.root.withdraw()
